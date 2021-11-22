@@ -2,14 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d63a1a56-14ba-4bce-997a-aea17ab0fa08" name="Changes" comment="Init">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fpm-wordpress/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fpm-wordpress/init.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fpm-wordpress/wp.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nginx-wordpress/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nginx-wordpress/default.conf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nginx-wordpress/init.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fpm-wordpress/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fpm-wordpress/init.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fpm-wordpress/wp.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/nginx-wordpress/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/nginx-wordpress/default.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/nginx-wordpress/init.sh" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +44,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1637557880357</updated>
-      <workItem from="1637557882174" duration="1492000" />
+      <workItem from="1637557882174" duration="1957000" />
     </task>
     <task id="LOCAL-00001" summary="Init">
       <created>1637557943249</created>
@@ -79,7 +81,14 @@
       <option name="project" value="LOCAL" />
       <updated>1637559253489</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Init">
+      <created>1637559452418</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1637559452418</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

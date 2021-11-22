@@ -1,46 +1,14 @@
-version: '2'
-
+version: '3'
 services:
-  mariadb:
-    image: mariadb:10.1
-    container_name: mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: w0rdPr3ssdb
-      MYSQL_DATABASE: wordpress
-    volumes:
-      - wordpress-db:/var/lib/mysql
-  fpm:
-    image: iamdb/fpm-bedrock-wordpress
-    container_name: fpm
-    links:
-      - mariadb:mariadb
-    volumes:
-      - /var/www/html
-    environment:
-      DB_NAME: wordpress
-      DB_USER: root
-      DB_PASSWORD: w0rdPr3ssdb
-      DB_HOST: mariadb
-      WP_ENV: development
-      WP_HOME: ${GITPOD_WORKSPACE_URL}
-      WP_SITEURL: ${GITPOD_WORKSPACE_URL}/wp
-      # uncomment below for new installations
-      # ADMIN_USER: admin
-      # ADMIN_PASS: password
-      # ADMIN_EMAIL: test@test.com
-      # SITE_TITLE: Wordpress
   nginx:
-    image: iamdb/nginx-bedrock-wordpress
-    container_name: nginx
-    links:
-      - fpm:fpm
-    volumes_from:
-      - fpm
+    build: ./nginx
+    volumes:
+      - ./website/bedrock:/var/www/html
     ports:
-      - "8000:80"
-    environment:
-      # uncomment below to remove installation password
-      # ALLOW_INSTALL: "yes"
-volumes:
-  wordpress-db:
-    driver: local
+      - '8000:80'
+    depends_on:
+      - php
+  php:
+    image: php:7.3.6-fpm-alpine3.9
+    volumes:
+      - ./website/bedrock:/var/www/html
