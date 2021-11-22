@@ -1,14 +1,111 @@
-version: '3'
+version: '2'
 services:
-  nginx:
-    build: ./nginx
-    volumes:
-      - ./website/bedrock:/var/www/html
-    ports:
-      - '8080:80'
+  #######################################
+  # Application
+  #######################################
+  app:
+    build:
+      context: ./.docker/app
     depends_on:
-      - php
-  php:
-    image: php:7.3.6-fpm-alpine3.9
+      - db
+      - mail
+    links:
+      - db
+      - mail
     volumes:
-      - ./website/bedrock:/var/www/html
+      - ./app:/var/www/html/
+    environment:
+      - DB_NAME=wp
+      - DB_USER=wp
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - DB_PREFIX=$DB_PREFIX
+      - WP_ENV=development
+      - WP_HOME=http://$PROJECT_NAME.docker
+      - WP_SITEURL=http://$PROJECT_NAME.docker/wp
+
+  #######################################
+  # Webserver
+  #######################################
+  web:
+    build:
+      context: ./.docker/web
+    depends_on:
+      - app
+    links:
+      - app
+    volumes_from:
+      - app
+    environment:
+      - VIRTUAL_HOST=$PROJECT_NAME.docker
+      - VIRTUAL_PORT=80
+    # substitute hostname to nginx conf; syntax from here: https://github.com/docker-library/docs/issues/496#issuecomment-203003827
+    command: /bin/sh -c "envsubst '$$VIRTUAL_HOST' < /etc/nginx/site.conf.template > /etc/nginx/site.conf && nginx -g 'daemon off;'"
+
+  #######################################
+  # Database
+  #######################################
+  # Enable port mapping to access the database via
+  # host: localhost
+  # port: 3306
+  #######################################
+  db:
+    image: mariadb
+#    ports:
+#      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=wp
+      - MYSQL_USER=wp
+      - MYSQL_PASSWORD=password
+
+  #######################################
+  # phpMyAdmin
+  #######################################
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      - VIRTUAL_PORT=80
+      - VIRTUAL_HOST=phpmyadmin.$PROJECT_NAME.docker
+      - PMA_ABSOLUTE_URI=http://phpmyadmin.$PROJECT_NAME.docker/
+      - PMA_ARBITRARY=1
+      - PMA_HOST=db
+      - PMA_PORT=3306
+      - PMA_USER=wp
+      - PMA_PASSWORD=password
+
+  #######################################
+  # Mailhog
+  #######################################
+  mail:
+    image: mailhog/mailhog
+    environment:
+      - VIRTUAL_PORT=8025
+      - VIRTUAL_HOST=mail.$PROJECT_NAME.docker
+
+  #######################################
+  # Composer
+  #######################################
+  composer:
+    image: composer
+    volumes:
+      - ./app:/app
+
+  #######################################
+  # CI-Test
+  #######################################
+  test:
+    build:
+      context: ./.docker/web
+    depends_on:
+      - web
+      - phpmyadmin
+      - mail
+    links:
+      - web:$PROJECT_NAME.docker
+      - phpmyadmin:phpmyadmin.$PROJECT_NAME.docker
+      - mail:mail.$PROJECT_NAME.docker
