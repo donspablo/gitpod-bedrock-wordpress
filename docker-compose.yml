@@ -22,8 +22,8 @@ services:
       DB_PASSWORD: w0rdPr3ssdb
       DB_HOST: mariadb
       WP_ENV: development
-      WP_HOME: http://192.168.99.100
-      WP_SITEURL: http://192.168.99.100/wp
+      WP_HOME: ${GITPOD_WORKSPACE_URL}
+      WP_SITEURL: ${GITPOD_WORKSPACE_URL}/wp
       # uncomment below for new installations
       # ADMIN_USER: admin
       # ADMIN_PASS: password
@@ -37,7 +37,7 @@ services:
     volumes_from:
       - fpm
     ports:
-      - "80:80"
+      - "8000:80"
     environment:
       # uncomment below to remove installation password
       # ALLOW_INSTALL: "yes"
