@@ -1,111 +1,46 @@
 version: '2'
+
 services:
-  #######################################
-  # Application
-  #######################################
-  app:
-    build:
-      context: ./.docker/app
-    depends_on:
-      - db
-      - mail
-    links:
-      - db
-      - mail
-    volumes:
-      - ./app:/var/www/html/
+  mariadb:
+    image: mariadb:10.1
+    container_name: mariadb
     environment:
-      - DB_NAME=wp
-      - DB_USER=wp
-      - DB_PASSWORD=password
-      - DB_HOST=db
-      - DB_PREFIX=$DB_PREFIX
-      - WP_ENV=development
-      - WP_HOME=http://$PROJECT_NAME.docker
-      - WP_SITEURL=http://$PROJECT_NAME.docker/wp
-
-  #######################################
-  # Webserver
-  #######################################
-  web:
-    build:
-      context: ./.docker/web
-    depends_on:
-      - app
+      MYSQL_ROOT_PASSWORD: w0rdPr3ssdb
+      MYSQL_DATABASE: wordpress
+    volumes:
+      - wordpress-db:/var/lib/mysql
+  fpm:
+    image: iamdb/fpm-bedrock-wordpress
+    container_name: fpm
     links:
-      - app
+      - mariadb:mariadb
+    volumes:
+      - /var/www/html
+    environment:
+      DB_NAME: wordpress
+      DB_USER: root
+      DB_PASSWORD: w0rdPr3ssdb
+      DB_HOST: mariadb
+      WP_ENV: development
+      WP_HOME: http://192.168.99.100
+      WP_SITEURL: http://192.168.99.100/wp
+      # uncomment below for new installations
+      # ADMIN_USER: admin
+      # ADMIN_PASS: password
+      # ADMIN_EMAIL: test@test.com
+      # SITE_TITLE: Wordpress
+  nginx:
+    image: iamdb/nginx-bedrock-wordpress
+    container_name: nginx
+    links:
+      - fpm:fpm
     volumes_from:
-      - app
+      - fpm
+    ports:
+      - "80:80"
     environment:
-      - GITPOD_WORKSPACE_URL=$PROJECT_NAME.docker
-      - VIRTUAL_PORT=8000
-    # substitute hostname to nginx conf; syntax from here: https://github.com/docker-library/docs/issues/496#issuecomment-203003827
-    command: /bin/sh -c "envsubst '$$GITPOD_WORKSPACE_URL' < /etc/nginx/site.conf.template > /etc/nginx/site.conf && nginx -g 'daemon off;'"
-
-  #######################################
-  # Database
-  #######################################
-  # Enable port mapping to access the database via
-  # host: localhost
-  # port: 3306
-  #######################################
-  db:
-    image: mariadb
-#    ports:
-#      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=wp
-      - MYSQL_USER=wp
-      - MYSQL_PASSWORD=password
-
-  #######################################
-  # phpMyAdmin
-  #######################################
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    depends_on:
-      - db
-    links:
-      - db
-    environment:
-      - VIRTUAL_PORT=8000
-      - GITPOD_WORKSPACE_URL=phpmyadmin.$PROJECT_NAME.docker
-      - PMA_ABSOLUTE_URI=http://phpmyadmin.$PROJECT_NAME.docker/
-      - PMA_ARBITRARY=1
-      - PMA_HOST=db
-      - PMA_PORT=3306
-      - PMA_USER=wp
-      - PMA_PASSWORD=password
-
-  #######################################
-  # Mailhog
-  #######################################
-  mail:
-    image: mailhog/mailhog
-    environment:
-      - VIRTUAL_PORT=800025
-      - GITPOD_WORKSPACE_URL=mail.$PROJECT_NAME.docker
-
-  #######################################
-  # Composer
-  #######################################
-  composer:
-    image: composer
-    volumes:
-      - ./app:/app
-
-  #######################################
-  # CI-Test
-  #######################################
-  test:
-    build:
-      context: ./.docker/web
-    depends_on:
-      - web
-      - phpmyadmin
-      - mail
-    links:
-      - web:$PROJECT_NAME.docker
-      - phpmyadmin:phpmyadmin.$PROJECT_NAME.docker
-      - mail:mail.$PROJECT_NAME.docker
+      # uncomment below to remove installation password
+      # ALLOW_INSTALL: "yes"
+volumes:
+  wordpress-db:
+    driver: local

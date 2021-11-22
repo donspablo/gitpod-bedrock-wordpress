@@ -1,5 +1,5 @@
 tasks:
   - init: |
-      make up
+      docker-compose pull
   - command: |
-      make up
+      docker-compose up
