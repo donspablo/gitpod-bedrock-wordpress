@@ -1,8 +1,8 @@
 server {
   listen [::]:80;
-  listen 80;
+  listen 8000;
 
-  server_name ${VIRTUAL_HOST};
+  server_name ${GITPOD_WORKSPACE_URL};
 
   access_log   /var/log/nginx/access.log main;
   error_log    /var/log/nginx/error.log;
@@ -47,10 +47,10 @@ server {
 # Redirect some domains
 server {
   listen [::]:80;
-  listen 80;
-  server_name www.${VIRTUAL_HOST};
+  listen 8000;
+  server_name www.${GITPOD_WORKSPACE_URL};
 
   location / {
-    return 301 http://${VIRTUAL_HOST}$request_uri;
+    return 301 http://${GITPOD_WORKSPACE_URL}$request_uri;
   }
 }

@@ -37,10 +37,10 @@ services:
     volumes_from:
       - app
     environment:
-      - VIRTUAL_HOST=$PROJECT_NAME.docker
-      - VIRTUAL_PORT=80
+      - GITPOD_WORKSPACE_URL=$PROJECT_NAME.docker
+      - VIRTUAL_PORT=8000
     # substitute hostname to nginx conf; syntax from here: https://github.com/docker-library/docs/issues/496#issuecomment-203003827
-    command: /bin/sh -c "envsubst '$$VIRTUAL_HOST' < /etc/nginx/site.conf.template > /etc/nginx/site.conf && nginx -g 'daemon off;'"
+    command: /bin/sh -c "envsubst '$$GITPOD_WORKSPACE_URL' < /etc/nginx/site.conf.template > /etc/nginx/site.conf && nginx -g 'daemon off;'"
 
   #######################################
   # Database
@@ -69,8 +69,8 @@ services:
     links:
       - db
     environment:
-      - VIRTUAL_PORT=80
-      - VIRTUAL_HOST=phpmyadmin.$PROJECT_NAME.docker
+      - VIRTUAL_PORT=8000
+      - GITPOD_WORKSPACE_URL=phpmyadmin.$PROJECT_NAME.docker
       - PMA_ABSOLUTE_URI=http://phpmyadmin.$PROJECT_NAME.docker/
       - PMA_ARBITRARY=1
       - PMA_HOST=db
@@ -84,8 +84,8 @@ services:
   mail:
     image: mailhog/mailhog
     environment:
-      - VIRTUAL_PORT=8025
-      - VIRTUAL_HOST=mail.$PROJECT_NAME.docker
+      - VIRTUAL_PORT=800025
+      - GITPOD_WORKSPACE_URL=mail.$PROJECT_NAME.docker
 
   #######################################
   # Composer
